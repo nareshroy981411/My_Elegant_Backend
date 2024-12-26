@@ -8,7 +8,7 @@ const jobSchema = new mongoose.Schema({
   location: String,
   postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
-
+ 
 module.exports = mongoose.model('Job', jobSchema);
 
 

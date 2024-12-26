@@ -8,12 +8,14 @@ const companyRoutes = require('./routes/companyRoutes');
 const { errorHandler } = require('./middlewares/errorHandler');
 const path = require('path');
 const fs = require('fs');
+const cors = require('cors');
 
 dotenv.config();
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors());
 
 // Ensure 'uploads' directory exists
 const uploadDir = path.join(__dirname, 'uploads');
