@@ -32,7 +32,7 @@ exports.registerUser = async (req, res) => {
       mobilenumber,
       skills,
       password: hashedPassword,
-      resume: req.file.path,
+      resume: req.file.path
     });
 
     await user.save();
