@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   skills: [String],
   resume: { type: String, required: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ['user', 'company', 'admin'], default: 'user' },
+  role: { type: String, default: 'user' },
 });
 
 userSchema.set("versionKey", false);
