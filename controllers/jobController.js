@@ -21,7 +21,7 @@ exports.createJob = async (req, res) => {
     console.log(skills)
 
     const companyId = req.user.id
-    // console.log(companyId,"COMPANYiD")
+
 
     // Validate required fields
     if (
@@ -41,13 +41,13 @@ exports.createJob = async (req, res) => {
       ? skills.map((item) => item.trim())
       : skills.split(",").map((item) => item.trim());
 
-      console.log(formattedSkills,"skills")
+
 
     const formattedQualification = Array.isArray(qualification)
       ? qualification
       : qualification.split(",").map((item) => item.trim());
 
-    const companyDetails = await Company.findById(companyId);
+    const companyDetails = await Company.findById(companyId).select("-companyEmail -companyRegistrationNumber -password");
 
     if (!companyDetails) {
       return res.status(404).json({
@@ -97,7 +97,8 @@ exports.getJobs = async (req, res) => {
       ]
     };
     const jobs = await Job.find(query).populate({
-      path: "company"
+      path: "company",
+      select: "-companyEmail -companyRegistrationNumber -password"
     }).sort({ createdAt: -1 }).select("-__v");
     if (!jobs) {
       return res.status(404).json({
@@ -121,7 +122,7 @@ exports.getJobById = async (req, res) => {
     // Find the job by ID and populate the company, selecting specific fields
     const job = await Job.findById(jobId).populate({
       path: "company",
-      select: "_id companyName companyWebsiteLink companyEstablishedDate" // Include only these fields
+      select: "_id companyName companyWebsiteLink companyEstablishedDate" 
     });
 
     if (!job) {

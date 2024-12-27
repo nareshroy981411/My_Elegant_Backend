@@ -54,9 +54,10 @@ exports.getAppliedJobs = async (req,res) => {
             options:{sort:{createdAt:-1}},
             populate:{
                 path:'company',
+                select: "-companyEmail -companyRegistrationNumber -password",
                 options:{sort:{createdAt:-1}},
             }
-        });
+        }).select("-__v");
         if(!application){
             return res.status(404).json({
                 message:"No Applications",
