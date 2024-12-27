@@ -5,6 +5,7 @@ const userRoutes = require('./routes/userRoutes');
 const jobRoutes = require('./routes/jobRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const companyRoutes = require('./routes/companyRoutes');
+const applicationRoutes = require("./routes/applicationRoutes")
 const { errorHandler } = require('./middlewares/errorHandler');
 const path = require('path');
 const fs = require('fs');
@@ -30,6 +31,7 @@ app.use('/users', userRoutes);
 app.use('/jobs', jobRoutes);
 app.use('/admin', adminRoutes);
 app.use('/company', companyRoutes);
+app.use("/application",applicationRoutes)
 
 // Error handling middleware
 app.use(errorHandler);

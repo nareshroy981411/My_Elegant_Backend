@@ -8,23 +8,26 @@ exports.createJob = async (req, res) => {
     const {
       title,
       description,
-      requirements,
+      skills,
       qualification,
       salary,
       location,
-      jobType,
+      employementType,
+      category,
       experience,
       position,
     } = req.body;
 
+    console.log(skills)
+
     const companyId = req.user.id
-    console.log(companyId,"COMPANYiD")
+
 
     // Validate required fields
     if (
-      !title || !description || !requirements || !qualification ||
-      !salary || !location || !jobType || !experience ||
-      !position
+      !title || !description || !skills || !qualification ||
+      !salary || !location || !employementType || !category || !experience ||
+      !position 
     ) {
       return res.status(400).json({
         message: "Something is missing.",
@@ -33,15 +36,18 @@ exports.createJob = async (req, res) => {
     }
 
     // Ensure requirements and qualification are arrays
-    const formattedRequirements = Array.isArray(requirements)
-      ? requirements
-      : requirements.split(",").map((item) => item.trim());
+    // Format skills and qualification as arrays
+    const formattedSkills = Array.isArray(skills)
+      ? skills.map((item) => item.trim())
+      : skills.split(",").map((item) => item.trim());
+
+
 
     const formattedQualification = Array.isArray(qualification)
       ? qualification
       : qualification.split(",").map((item) => item.trim());
 
-    const companyDetails = await Company.findById(companyId);
+    const companyDetails = await Company.findById(companyId).select("-companyEmail -companyRegistrationNumber -password");
 
     if (!companyDetails) {
       return res.status(404).json({
@@ -54,11 +60,12 @@ exports.createJob = async (req, res) => {
     const job = await Job.create({
       title,
       description,
-      requirements: formattedRequirements,
+      skills: formattedSkills,
       qualification: formattedQualification,
       salary: Number(salary),
       location,
-      jobType,
+      employementType,
+      category,
       experienceLevel: experience,
       position,
       company: companyDetails
@@ -90,8 +97,9 @@ exports.getJobs = async (req, res) => {
       ]
     };
     const jobs = await Job.find(query).populate({
-      path: "company"
-    }).sort({ createdAt: -1 });
+      path: "company",
+      select: "-companyEmail -companyRegistrationNumber -password"
+    }).sort({ createdAt: -1 }).select("-__v");
     if (!jobs) {
       return res.status(404).json({
         message: "Jobs not found.",
@@ -114,7 +122,7 @@ exports.getJobById = async (req, res) => {
     // Find the job by ID and populate the company, selecting specific fields
     const job = await Job.findById(jobId).populate({
       path: "company",
-      select: "_id companyName companyWebsiteLink companyEstablishedDate" // Include only these fields
+      select: "_id companyName companyWebsiteLink companyEstablishedDate" 
     });
 
     if (!job) {
