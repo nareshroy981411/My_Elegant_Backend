@@ -10,11 +10,6 @@ const applicationSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
         required:true
-    },
-    status:{
-        type:String,
-        enum:['pending', 'selected', 'rejected'],
-        default:'pending'
     }
 },{timestamps:true});
 const Application  = mongoose.model("Application", applicationSchema);

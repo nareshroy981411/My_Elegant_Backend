@@ -68,6 +68,8 @@ exports.loginCompany = async (req, res) => {
 
     // Generate JWT token
     const secretKey = process.env.JWT_SECRET || 'default_secret_key';
+    console.log("ROLL",company.role)
+    console.log("hiiiiii")
     const token = jwt.sign({ id: company._id, role: company.role }, secretKey, { expiresIn: '1h' });
 
     res.status(200).send({ message: 'Login successful', token });
