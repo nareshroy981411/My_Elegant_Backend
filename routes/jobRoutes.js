@@ -7,7 +7,7 @@ const { authenticateToken } = require('../middlewares/authMiddleware');
 
 router.post('/createJob',authenticateToken,createJob);
 router.get('/allJobs',authenticateToken, getJobs);
-router.get("/get/:id", authenticateToken, getJobById);
-router.delete('/allJobs/:id',authenticateToken, deleteJob);
+router.get("/getJob/:id", authenticateToken, getJobById);
+router.delete('/job/:id',authenticateToken, deleteJob);
 
 module.exports = router;
