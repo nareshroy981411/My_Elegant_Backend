@@ -97,7 +97,13 @@ exports.getAdminProfile = async (req, res) => {
 // Get All Jobs Data
 exports.getAllJobs = async (req, res) => {
   try {
-    const jobs = await Job.find(); 
+    const jobs = await Job.find()
+  .populate({
+    path: "company",
+    select: "-password -companyRegistrationNumber -companyEmail -companyEstablishedDate -companyWebsiteLink -aboutCompany -role", // Exclude the password field
+  })
+  .select("-password");
+  
     
 
     if (!jobs.length) {
