@@ -115,6 +115,112 @@ exports.getJobs = async (req, res) => {
   }
 };
 
+exports.getJobsByCategory = async (req, res) => {
+  try {
+    const { category } = req.query;
+    const matchCondition = category ? { category } : {};
+
+    const result = await Job.aggregate([
+      {
+        // Stage 1: Match jobs based on category (optional)
+        $match: matchCondition
+      },
+      {
+        // Stage 2: Lookup company details
+        $lookup: {
+          from: "companies", // Collection name of companies
+          localField: "company", // Field in Job schema referencing the Company
+          foreignField: "_id", // Field in Company schema used for joining
+          as: "companyDetails" // Output field for joined data
+        }
+      },
+      {
+        // Stage 3: Project only necessary job and company details
+        $project: {
+          title: 1,
+          description: 1,
+          skills: 1,
+          qualification: 1,
+          salary: 1,
+          experienceLevel: 1,
+          location: 1,
+          category: 1,
+          employementType: 1,
+          position: 1,
+          company: {
+            companyName: { $arrayElemAt: ["$companyDetails.companyName", 0] }, 
+            establishedDate: { $arrayElemAt: ["$companyDetails.companyEstablishedDate", 0] }, 
+            websiteLink: { $arrayElemAt: ["$companyDetails.companyWebsiteLink", 0] }, 
+            aboutCompany: { $arrayElemAt: ["$companyDetails.aboutCompany", 0] }, 
+            location: { $arrayElemAt: ["$companyDetails.location", 0] } 
+          }
+        }
+      },
+      {
+        // Stage 4: Group by category and collect jobs
+        $group: {
+          _id: "$category", 
+          count: { $sum: 1 }, 
+          jobs: {
+            $push: {
+              title: "$title",
+              description: "$description",
+              skills: "$skills",
+              qualification: "$qualification",
+              salary: "$salary",
+              experienceLevel: "$experienceLevel",
+              location: "$location",
+              category: "$category",
+              employementType: "$employementType",
+              position: "$position",
+              company: "$company" 
+            }
+          }
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: result
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getJobsByCompany = async (req, res) => {
+  try {
+    const companyId  = req.user.id 
+    console.log(companyId,"comp-id")
+
+    const result = await Job.find({ company: companyId }) 
+      .select(
+        "title description skills qualification salary experienceLevel location category employementType position"
+      ) 
+      .exec();
+
+    if (!result.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No jobs found for this company"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: result
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
+
 exports.getJobById = async (req, res) => {
   try {
     const jobId = req.params.id;

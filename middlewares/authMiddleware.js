@@ -19,9 +19,10 @@
 //   }
 // };
 
-const jwt = require('jsonwebtoken');
 
 // Middleware to authenticate the token
+const jwt = require('jsonwebtoken');
+
 exports.authenticateToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1]; // Extract token from "Authorization" header
   if (!token) {
@@ -40,13 +41,14 @@ exports.authenticateToken = (req, res, next) => {
   }
 };
 
+
 // Middleware to authorize roles
 exports.authorizeRole = (role) => (req, res, next) => {
   if (!req.user || req.user.role !== role) {
     console.error(`Unauthorized role: Expected ${role}, but got ${req.user?.role || 'undefined'}`);
     return res.status(403).send({ error: 'Access denied. Unauthorized role' });
   }
-  console.log(`Authorized Role: ${role}`);
+  // console.log(`Authorized Role: ${role}`);
   next();
 };
 
@@ -56,3 +58,23 @@ exports.authorizeAdmin = (req, res, next) => {
   }
   next();
 };
+
+exports.isCompany = async(req,res,next)=>{
+  if(req.user.role !== "company"){
+      return res.status(403).json({
+         success:false,
+         message:"Access denied! company rigts"          
+      })             
+  }
+  next()
+}
+
+exports.isUser = async(req,res,next)=>{
+  if(req.user.role !== "user"){
+      return res.status(403).json({
+         success:false,
+         message:"Access denied! user rigts"          
+      })             
+  }
+  next()
+}
