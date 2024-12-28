@@ -193,6 +193,7 @@ exports.getJobsByCategory = async (req, res) => {
 exports.getJobsByCompany = async (req, res) => {
   try {
     const companyId  = req.user.id 
+    console.log(companyId,"comp-id")
 
     const result = await Job.find({ company: companyId }) 
       .select(
