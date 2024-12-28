@@ -41,8 +41,6 @@ exports.createJob = async (req, res) => {
       ? skills.map((item) => item.trim())
       : skills.split(",").map((item) => item.trim());
 
-
-
     const formattedQualification = Array.isArray(qualification)
       ? qualification
       : qualification.split(",").map((item) => item.trim());
@@ -85,7 +83,6 @@ exports.createJob = async (req, res) => {
     });
   }
 };
-
 
 exports.getJobs = async (req, res) => {
   try {
@@ -163,6 +160,7 @@ exports.getJobsByCategory = async (req, res) => {
           count: { $sum: 1 }, 
           jobs: {
             $push: {
+              _id:"$_id",
               title: "$title",
               description: "$description",
               skills: "$skills",

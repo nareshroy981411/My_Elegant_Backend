@@ -11,7 +11,7 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ error: "Resume file is required" });
     }
 
-    const { fullname, email, mobilenumber, skills, password } = req.body;
+    const { fullname, email, mobilenumber,skills, password } = req.body;
 
     // Validate email
     const emailRegex = /\S+@\S+\.\S+/;
@@ -28,20 +28,20 @@ exports.registerUser = async (req, res) => {
     }
 
     // Ensure `skills` is an array
-    let formattedSkills;
-    try {
-      formattedSkills = Array.isArray(skills)
-        ? skills.map((item) => item.trim())
-        : skills.split(",").map((item) => item.trim());
-    } catch (error) {
-      return res.status(400).json({ error: "Invalid format for skills" });
-    }
+    // let formattedSkills;
+    // try {
+    //   formattedSkills = Array.isArray(skills)
+    //     ? skills.map((item) => item.trim())
+    //     : skills.split(",").map((item) => item.trim());
+    // } catch (error) {
+    //   return res.status(400).json({ error: "Invalid format for skills" });
+    // }
 
-    if (!formattedSkills || formattedSkills.length === 0) {
-      return res
-        .status(400)
-        .json({ error: "Skills must be a non-empty array or valid string" });
-    }
+    // if (!formattedSkills || formattedSkills.length === 0) {
+    //   return res
+    //     .status(400)
+    //     .json({ error: "Skills must be a non-empty array or valid string" });
+    // }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -51,7 +51,7 @@ exports.registerUser = async (req, res) => {
       fullname,
       email,
       mobilenumber,
-      skills: formattedSkills,
+      skills,
       password: hashedPassword,
       resume: req.file.path,
     });
