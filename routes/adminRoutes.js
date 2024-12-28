@@ -1,19 +1,10 @@
 // // adminRoutes.js
 
-// const express = require('express');
-// const router = express.Router();
-// const { getAllUsers, deleteUser } = require('../controllers/adminController');
-// const { authenticateToken } = require('../middlewares/authMiddleware');
-// router.get('/users', authenticateToken, getAllUsers);
-// router.delete('/users/:id', authenticateToken, deleteUser);
-// module.exports = router;
-
 const express = require('express');
 const { authenticateToken, authorizeAdmin } = require('../middlewares/authMiddleware');
 const adminController = require('../controllers/adminController');
 
 const router = express.Router();
-
 // Admin Authentication
 router.post('/register', adminController.registerAdmin);
 router.post('/login', adminController.loginAdmin);
@@ -22,7 +13,7 @@ router.post('/login', adminController.loginAdmin);
 // Route to get admin profile
 router.get('/profile', authenticateToken, adminController.getAdminProfile);
 // Route to get all jobs data
-router.get('/jobs', adminController.getAllJobs);
+router.get('/jobs',authenticateToken, adminController.getAllJobs);
 
 // User Management
 router.get('/users', authenticateToken, authorizeAdmin, adminController.getAllUsers);
