@@ -22,7 +22,7 @@ router.post('/login', adminController.loginAdmin);
 // Route to get admin profile
 router.get('/profile', authenticateToken, adminController.getAdminProfile);
 // Route to get all jobs data
-router.get('/jobs', adminController.getAllJobs);
+router.get('/jobs',authenticateToken, adminController.getAllJobs);
 
 // User Management
 router.get('/users', authenticateToken, authorizeAdmin, adminController.getAllUsers);
