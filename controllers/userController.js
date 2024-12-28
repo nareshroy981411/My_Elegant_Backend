@@ -7,17 +7,16 @@ const fs = require("fs");
 
 exports.registerUser = async (req, res) => {
   try {
-    console.log("Request body:", req.body);
-    console.log("Request file:", req.file);
-
-    if (!req.file) return res.status(400).send("Resume file is required");
+    if (!req.file) {
+      return res.status(400).json({ error: "Resume file is required" });
+    }
 
     const { fullname, email, mobilenumber, skills, password } = req.body;
 
     // Validate email
     const emailRegex = /\S+@\S+\.\S+/;
     if (!emailRegex.test(email)) {
-      return res.status(400).send("Please use a valid email address");
+      return res.status(400).json({ error: "Please use a valid email address" });
     }
 
     // Validate mobile number
@@ -25,7 +24,23 @@ exports.registerUser = async (req, res) => {
     if (!mobileRegex.test(mobilenumber)) {
       return res
         .status(400)
-        .send("Mobile number must contain exactly 10 digits");
+        .json({ error: "Mobile number must contain exactly 10 digits" });
+    }
+
+    // Ensure `skills` is an array
+    let formattedSkills;
+    try {
+      formattedSkills = Array.isArray(skills)
+        ? skills.map((item) => item.trim())
+        : skills.split(",").map((item) => item.trim());
+    } catch (error) {
+      return res.status(400).json({ error: "Invalid format for skills" });
+    }
+
+    if (!formattedSkills || formattedSkills.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "Skills must be a non-empty array or valid string" });
     }
 
     // Hash the password
@@ -36,19 +51,24 @@ exports.registerUser = async (req, res) => {
       fullname,
       email,
       mobilenumber,
-      skills,
+      skills: formattedSkills,
       password: hashedPassword,
-      resume: req.file.path
+      resume: req.file.path,
     });
 
     await user.save();
-    res.status(201).send({
+    res.status(201).json({
       message: "User registered successfully",
-      user: { id: user._id, fullname: user.fullname, email: user.email },
+      user: {
+        id: user._id,
+        fullname: user.fullname,
+        email: user.email,
+        skills: user.skills,
+      },
     });
   } catch (err) {
     console.error("Error during user registration:", err);
-    res.status(500).send({ error: err.message || "Something went wrong!" });
+    res.status(500).json({ error: err.message || "Something went wrong!" });
   }
 };
 

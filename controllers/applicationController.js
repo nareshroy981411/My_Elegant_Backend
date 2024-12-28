@@ -49,6 +49,7 @@ exports.applyJob = async (req, res) => {
 exports.getAppliedJobs = async (req,res) => {
     try {
         const userId = req.user.id;
+        console.log("applicant",userId)
         const application = await Application.find({applicant:userId}).sort({createdAt:-1}).populate({
             path:'job',
             options:{sort:{createdAt:-1}},
@@ -130,3 +131,42 @@ exports.updateStatus = async (req,res) => {
         console.log(error);
     }
 }
+
+exports.getApplicationByCompany = async (req, res) => {
+    try {
+      const  companyId  = req.user.id; 
+  
+      // Step 1: Find all jobs belonging to the company
+      const jobs = await Job.find({ company: companyId }).select("_id");
+  
+      if (!jobs.length) {
+        return res.status(404).json({
+          success: false,
+          message: "No jobs found for this company"
+        });
+      }
+  
+      // Step 2: Find all applications linked to the retrieved jobs
+      const jobIds = jobs.map((job) => job._id); // Extract job IDs
+      const applications = await Application.find({ job: { $in: jobIds } })
+        .populate("job", "title") // Populate job title
+        .populate("applicant", "fullname email mobilenumber") // Populate applicant details (if applicable)
+        .exec();
+  
+      if (!applications.length) {
+        return res.status(404).json({
+          success: false,
+          message: "No applications found for jobs under this company"
+        });
+      }
+  
+      res.status(200).json({
+        success: true,
+        data: applications
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: err.message });
+    }
+  };
+  
