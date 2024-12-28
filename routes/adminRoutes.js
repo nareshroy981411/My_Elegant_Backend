@@ -1,19 +1,10 @@
 // // adminRoutes.js
 
-// const express = require('express');
-// const router = express.Router();
-// const { getAllUsers, deleteUser } = require('../controllers/adminController');
-// const { authenticateToken } = require('../middlewares/authMiddleware');
-// router.get('/users', authenticateToken, getAllUsers);
-// router.delete('/users/:id', authenticateToken, deleteUser);
-// module.exports = router;
-
 const express = require('express');
 const { authenticateToken, authorizeAdmin } = require('../middlewares/authMiddleware');
 const adminController = require('../controllers/adminController');
 
 const router = express.Router();
-
 // Admin Authentication
 router.post('/register', adminController.registerAdmin);
 router.post('/login', adminController.loginAdmin);
