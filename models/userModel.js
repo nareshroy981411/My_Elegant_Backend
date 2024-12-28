@@ -5,9 +5,9 @@ const userSchema = new mongoose.Schema({
   fullname: { type: String, required: true },
   email: { type: String, unique: true, required: true },
   mobilenumber: { type: String, required: true },
-  skills: [{
+  skills: {
     type: String
-  }],
+  },
   resume: { type: String },
   password: { type: String, required: true },
   role: { type: String, default: 'user' },
