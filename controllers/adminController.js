@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const Admin = require('../models/adminModel');
 const User = require('../models/userModel');
 const Company = require('../models/companyModel');
+const Job = require("../models/jobModel")
 
 exports.registerAdmin = async (req, res) => {
   try {
@@ -96,7 +97,8 @@ exports.getAdminProfile = async (req, res) => {
 // Get All Jobs Data
 exports.getAllJobs = async (req, res) => {
   try {
-    const jobs = await Job.find(); // Retrieve all job data from Job collection
+    const jobs = await Job.find(); 
+    
 
     if (!jobs.length) {
       return res.status(404).send({ message: 'No jobs found' });
